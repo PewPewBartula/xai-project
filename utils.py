@@ -1,6 +1,8 @@
 import pandas as pd 
 # Make sure all columns aree displayed
 pd.set_option('display.max_columns', None)
+from sklearn.model_selection import train_test_split
+from imblearn.over_sampling import RandomOverSampler
 
 class DataLoader():
 
@@ -20,6 +22,7 @@ class DataLoader():
                             "work_type",
                             "Residence_type",
                             "smoking_status"]
+        
         encoded_cols = pd.get_dummies(self.data[string_cols], 
                                 prefix=string_cols)
 
@@ -35,15 +38,33 @@ class DataLoader():
         # Drop id as it is not needed
         self.data.drop(["id"], axis=1, inplace=True)
 
+    def get_splited_data(self):
+        # X is only input data, so everything without last column
+        X = self.data.iloc[:,:-1]
+        # Y is only output, so only last column
+        y = self.data.iloc[:,-1]
+        # Return splited data - for model testing and training  
+        return train_test_split(X, y, test_size=0.2, random_state=252734)
+    
+    def oversample_data(self, X_train, y_train):
+        oversampler = RandomOverSampler(random_state=252734)
+        # Convert to numpy and oversample given data
+        x_np, y_np = oversampler.fit_resample(X_train.to_numpy() , y_train.to_numpy())
+        # Convert back to pandas
+        x_over = pd.DataFrame(x_np, columns=X_train.columns)
+        y_over = pd.Series(y_np, name=y_train.name)
+        # Return oversampled data
+        return x_over, y_over
     
 data_loader = DataLoader()
 data_loader.load_dataset()
-data = data_loader.data
-# print(data)
-
 data_loader.preprocess_data()
 data = data_loader.data
 print(data)
+X_train, X_test, y_train, y_test = data_loader.get_splited_data()
+X_train, y_train = data_loader.oversample_data(X_train, y_train)
+print(f"Training data: {X_train.shape, y_train.shape}")
+print(f"Test data: {X_test.shape, y_test.shape}")
 
 
 
