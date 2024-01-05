@@ -56,16 +56,3 @@ class DataLoader():
         # Return oversampled data
         return x_over, y_over
     
-data_loader = DataLoader()
-data_loader.load_dataset()
-data_loader.preprocess_data()
-data = data_loader.data
-print(data)
-X_train, X_test, y_train, y_test = data_loader.get_splited_data()
-X_train, y_train = data_loader.oversample_data(X_train, y_train)
-print(f"Training data: {X_train.shape, y_train.shape}")
-print(f"Test data: {X_test.shape, y_test.shape}")
-
-
-
-
