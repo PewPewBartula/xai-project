@@ -30,11 +30,12 @@ explainer = lime_tabular.LimeTabularExplainer(
     mode='classification'
 )
 
-# Explain given instance
-exp = explainer.explain_instance(
-    data_row=X_test.iloc[1], 
-    predict_fn=rf.predict_proba
-)
+for x in range(6):
+    # Explain given instance
+    exp = explainer.explain_instance(
+        data_row=X_test.iloc[x], 
+        predict_fn=rf.predict_proba
+    )
 
-# Export result to a file
-exp.save_to_file('lime.html')
+    # Export result to a file
+    exp.save_to_file(f'lime'+str(x)+'.html')
